@@ -3,6 +3,7 @@ import sys
 import json
 import shutil
 import re
+import platform
 import subprocess
 from pathlib import Path
 
@@ -16,6 +17,17 @@ CYAN = "\033[0;36m"
 RED = "\033[0;31m"
 BOLD = "\033[1m"
 NC = "\033[0m"
+
+def get_current_os() -> str:
+    """Detect current operating system key (linux, windows, darwin)."""
+    sys_name = platform.system().lower()
+    if sys_name == "linux":
+        return "linux"
+    elif sys_name == "windows":
+        return "windows"
+    elif sys_name in ("darwin", "macos"):
+        return "darwin"
+    return sys_name
 
 def load_config() -> dict:
     if CONFIG_FILE.exists():
@@ -38,10 +50,40 @@ def replace_in_file(filepath: Path, substitutions: dict):
     try:
         content = filepath.read_text(encoding="utf-8")
         for key, value in substitutions.items():
-            content = content.replace(key, value)
+            content = content.replace(f"{{{{{key}}}}}", str(value))
+            content = content.replace(f"{{{key}}}", str(value))
         filepath.write_text(content, encoding="utf-8")
     except UnicodeDecodeError:
         pass  # Skip binary files
+
+def process_os_folder(target_dir: Path, current_os: str):
+    """If target_dir contains an 'os' folder, copy current OS files to target_dir root, then delete 'os'."""
+    os_dir = target_dir / "os"
+    if not os_dir.exists() or not os_dir.is_dir():
+        return
+        
+    print(f"  {CYAN}→{NC} Detected OS: '{current_os}'. Processing os/ directory...")
+    
+    # Check for matching OS folder (support darwin/macos alias)
+    os_target_subdir = os_dir / current_os
+    if not os_target_subdir.exists() and current_os in ("darwin", "macos"):
+        os_target_subdir = os_dir / "macos" if (os_dir / "macos").exists() else os_dir / "darwin"
+        
+    if os_target_subdir.exists() and os_target_subdir.is_dir():
+        for item in os_target_subdir.iterdir():
+            dest = target_dir / item.name
+            if item.is_dir():
+                if dest.exists():
+                    shutil.rmtree(dest)
+                shutil.copytree(item, dest)
+            else:
+                shutil.copy2(item, dest)
+        print(f"  {GREEN}✓{NC} Extracted OS files from os/{os_target_subdir.name}/ to project root")
+    else:
+        print(f"  {YELLOW}⚠{NC} No specific files found under os/{current_os}/")
+        
+    # Remove the entire 'os' folder from generated project
+    shutil.rmtree(os_dir, ignore_errors=True)
 
 def scaffold_project(language_raw: str, project_name: str):
     config = load_config()
@@ -68,17 +110,27 @@ def scaffold_project(language_raw: str, project_name: str):
         print(f"{RED}✗ Error:{NC} Directory '{project_name}' already exists.")
         sys.exit(1)
         
-    print(f"\n{BOLD}Creating {template_lang} project:{NC} {project_name}\n")
+    current_os = get_current_os()
+    print(f"\n{BOLD}🚀 Creating {template_lang} project:{NC} {project_name} ({current_os})\n")
     
     # Copy template tree
     shutil.copytree(template_dir, target_dir)
     
-    # Process files in target directory
+    # Extract files from os/<current_os>/ and delete os/ folder
+    process_os_folder(target_dir, current_os)
+    
+    # Gather placeholders from templates.json for current_os
+    os_info = lang_info.get("os", {}).get(current_os, {})
+    if not os_info and current_os == "darwin":
+        os_info = lang_info.get("os", {}).get("macos", {})
+    placeholders = os_info.get("placeholders", {})
+    
     substitutions = {
-        "{{PROJECT_NAME}}": project_name,
-        "{PROJECT_NAME}": project_name,
+        "PROJECT_NAME": project_name,
+        **placeholders
     }
     
+    # Process files in target directory
     for file_path in target_dir.rglob("*"):
         if file_path.is_file():
             # Rename gitignore.template -> .gitignore
@@ -117,8 +169,10 @@ def scaffold_project(language_raw: str, project_name: str):
     if template_lang == "python":
         print("  uv run src/main.py")
     else:
-        print("  ./requirements.sh install    # (optional) install dependencies")
-        print("  ./build.sh                   # build & run")
+        req_cmd = placeholders.get("REQUIREMENTS_CMD", "./requirements.sh install")
+        build_cmd = placeholders.get("BUILD_CMD", "./build.sh")
+        print(f"  {req_cmd}    # (optional) install dependencies")
+        print(f"  {build_cmd}                   # build & run")
 
 def main():
     args = sys.argv[1:]
@@ -128,7 +182,7 @@ def main():
         print(f"{BOLD}tbuild{NC} — Cross-platform project scaffolding tool\n")
         print(f"{BOLD}Usage:{NC}")
         print("  tbuild init <language> <project_name>\n")
-        print(f"{BOLD}Supported Languages :{NC}")
+        print(f"{BOLD}Supported Languages (from templates.json):{NC}")
         for name, info in config.items():
             aliases = f" ({', '.join(info['aliases'])})" if info.get("aliases") else ""
             desc = info.get("description", "")

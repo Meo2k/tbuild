@@ -47,9 +47,63 @@ tbuild init cpp my_cpp_project
 tbuild init c my_c_lib
 ```
 
+---
+
+## Configuration (`templates.json`)
+
+All template metadata, post-initialization commands, aliases, and OS-specific placeholders are defined in `src/tbuild/templates.json`.
+
+### Example `templates.json`:
+
+```json
+{
+  "cpp": {
+    "aliases": ["c++"],
+    "description": "C++ project (C++20, CMake + Ninja)",
+    "post_init": [
+      "git init",
+      "git add -A",
+      "git commit -m \"chore: init cpp project via tbuild\""
+    ],
+    "os": {
+      "linux": {
+        "placeholders": {
+          "REQUIREMENTS_CMD": "./requirements.sh install",
+          "BUILD_CMD": "./build.sh",
+          "UPDATE_CMD": "./requirements.sh update",
+          "OS_NAME": "Linux"
+        }
+      },
+      "windows": {
+        "placeholders": {
+          "REQUIREMENTS_CMD": "requirements.bat install",
+          "BUILD_CMD": "build.bat",
+          "UPDATE_CMD": "requirements.bat update",
+          "OS_NAME": "Windows"
+        }
+      }
+    }
+  }
+}
+```
+
+### Schema & Field Reference:
+
+| Field | Type | Required | Description |
+| :--- | :--- | :---: | :--- |
+| `<template_name>` | `string` | **Yes** | Key matching the template folder name in `src/tbuild/templates/<name>`. |
+| `aliases` | `list[string]` | No | Alternative command aliases for the template (e.g. `py` for `python`, `c++` for `cpp`). |
+| `description` | `string` | No | Short template summary displayed in `tbuild --help`. |
+| `post_init` | `list[string]` | No | List of shell commands executed sequentially inside the generated project folder. |
+| `os` | `object` | No | Object containing OS-dependent configurations keyed by platform (`linux`, `windows`, `darwin`/`macos`). |
+| `os.<platform>.placeholders` | `object` | No | Key-value pairs for placeholders (e.g., `{{BUILD_CMD}}` or `{BUILD_CMD}`) replaced dynamically in text files based on host OS. |
+
+---
+
 ## Adding New Templates
 
-To add a new project template (e.g., `rust`, `go`, `react`):
-1. Create a new directory inside `src/tbuild/templates/<name>`.
-2. Add your boilerplate files (use `{{PROJECT_NAME}}` as a placeholder for the project name).
-3. Configure post-init setup commands, descriptions, and aliases in `src/tbuild/templates.json`.
+To add a new template (e.g. `rust`, `go`, `react`):
+1. Create a template folder in `src/tbuild/templates/<name>`.
+2. *(Optional)* Add OS-specific files inside `src/tbuild/templates/<name>/os/<platform>/` (these are automatically extracted to project root and `os/` is deleted).
+3. Add boilerplate files using `{{PROJECT_NAME}}` or custom placeholders.
+4. Register the new template in `src/tbuild/templates.json`.

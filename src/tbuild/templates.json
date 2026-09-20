@@ -3,9 +3,7 @@
     "aliases": ["py"],
     "description": "Python project (uv)",
     "post_init": [
-      "uv init", 
-      "git add -A",
-      "git commit -m \"chore: init c project via tbuild\""
+      "uv init"
     ]
   },
   "cpp": {
@@ -15,7 +13,33 @@
       "git init",
       "git add -A",
       "git commit -m \"chore: init cpp project via tbuild\""
-    ]
+    ],
+    "os": {
+      "linux": {
+        "placeholders": {
+          "REQUIREMENTS_CMD": "./requirements.sh install",
+          "BUILD_CMD": "./build.sh",
+          "UPDATE_CMD": "./requirements.sh update",
+          "OS_NAME": "Linux"
+        }
+      },
+      "windows": {
+        "placeholders": {
+          "REQUIREMENTS_CMD": "requirements.bat install",
+          "BUILD_CMD": "build.bat",
+          "UPDATE_CMD": "requirements.bat update",
+          "OS_NAME": "Windows"
+        }
+      },
+      "darwin": {
+        "placeholders": {
+          "REQUIREMENTS_CMD": "./requirements.sh install",
+          "BUILD_CMD": "./build.sh",
+          "UPDATE_CMD": "./requirements.sh update",
+          "OS_NAME": "macOS"
+        }
+      }
+    }
   },
   "c": {
     "aliases": [],
@@ -24,6 +48,32 @@
       "git init",
       "git add -A",
       "git commit -m \"chore: init c project via tbuild\""
-    ]
+    ],
+    "os": {
+      "linux": {
+        "placeholders": {
+          "REQUIREMENTS_CMD": "./requirements.sh install",
+          "BUILD_CMD": "./build.sh",
+          "UPDATE_CMD": "./requirements.sh update",
+          "OS_NAME": "Linux"
+        }
+      },
+      "windows": {
+        "placeholders": {
+          "REQUIREMENTS_CMD": "requirements.bat install",
+          "BUILD_CMD": "build.bat",
+          "UPDATE_CMD": "requirements.bat update",
+          "OS_NAME": "Windows"
+        }
+      },
+      "darwin": {
+        "placeholders": {
+          "REQUIREMENTS_CMD": "./requirements.sh install",
+          "BUILD_CMD": "./build.sh",
+          "UPDATE_CMD": "./requirements.sh update",
+          "OS_NAME": "macOS"
+        }
+      }
+    }
   }
 }
