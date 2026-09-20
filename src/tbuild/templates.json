@@ -1,0 +1,29 @@
+{
+  "python": {
+    "aliases": ["py"],
+    "description": "Python project (uv)",
+    "post_init": [
+      "uv init", 
+      "git add -A",
+      "git commit -m \"chore: init c project via tbuild\""
+    ]
+  },
+  "cpp": {
+    "aliases": ["c++"],
+    "description": "C++ project (C++20, CMake + Ninja)",
+    "post_init": [
+      "git init",
+      "git add -A",
+      "git commit -m \"chore: init cpp project via tbuild\""
+    ]
+  },
+  "c": {
+    "aliases": [],
+    "description": "C project (C17, CMake + Ninja)",
+    "post_init": [
+      "git init",
+      "git add -A",
+      "git commit -m \"chore: init c project via tbuild\""
+    ]
+  }
+}
