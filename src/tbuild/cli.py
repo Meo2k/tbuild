@@ -6,17 +6,13 @@ import re
 import platform
 import subprocess
 from pathlib import Path
+from rich.console import Console
 
 TEMPLATES_DIR = Path(__file__).parent / "templates"
 CONFIG_FILE = Path(__file__).parent / "templates.json"
 
-# Colors
-GREEN = "\033[0;32m"
-YELLOW = "\033[1;33m"
-CYAN = "\033[0;36m"
-RED = "\033[0;31m"
-BOLD = "\033[1m"
-NC = "\033[0m"
+
+console = Console()
 
 def get_current_os() -> str:
     """Detect current operating system key (linux, windows, darwin)."""
@@ -35,7 +31,7 @@ def load_config() -> dict:
             with open(CONFIG_FILE, "r", encoding="utf-8") as f:
                 return json.load(f)
         except Exception as e:
-            print(f"{YELLOW}⚠ Warning:{NC} Failed to load templates.json: {e}")
+            console.print(f"[yellow]⚠ Warning:[/yellow] Failed to load templates.json: {e}")
     return {}
 
 def resolve_language(language_raw: str, config: dict) -> tuple[str, dict]:
@@ -62,7 +58,7 @@ def process_os_folder(target_dir: Path, current_os: str):
     if not os_dir.exists() or not os_dir.is_dir():
         return
         
-    print(f"  {CYAN}→{NC} Detected OS: '{current_os}'. Processing os/ directory...")
+    console.print(f"  [cyan]→[/cyan] Detected OS: '{current_os}'. Processing os/ directory...")
     
     # Check for matching OS folder (support darwin/macos alias)
     os_target_subdir = os_dir / current_os
@@ -78,9 +74,9 @@ def process_os_folder(target_dir: Path, current_os: str):
                 shutil.copytree(item, dest)
             else:
                 shutil.copy2(item, dest)
-        print(f"  {GREEN}✓{NC} Extracted OS files from os/{os_target_subdir.name}/ to project root")
+        console.print(f"  [green]✓[/green] Extracted OS files from os/{os_target_subdir.name}/ to project root")
     else:
-        print(f"  {YELLOW}⚠{NC} No specific files found under os/{current_os}/")
+        console.print(f"  [yellow]⚠[/yellow] No specific files found under os/{current_os}/")
         
     # Remove the entire 'os' folder from generated project
     shutil.rmtree(os_dir, ignore_errors=True)
@@ -91,27 +87,27 @@ def scaffold_project(language_raw: str, project_name: str):
     
     if not template_lang:
         supported = list(config.keys())
-        print(f"{RED}✗ Error:{NC} Unsupported language '{language_raw}'.")
-        print(f"  Supported templates in templates.json: {', '.join(supported)}")
+        console.print(f"[red]✗ Error:[/red] Unsupported language '{language_raw}'.")
+        console.print(f"  Supported templates in templates.json: {', '.join(supported)}")
         sys.exit(1)
         
     template_dir = TEMPLATES_DIR / template_lang
     if not template_dir.exists():
-        print(f"{RED}✗ Error:{NC} Template directory not found at '{template_dir}'.")
+        console.print(f"[red]✗ Error:[/red] Template directory not found at '{template_dir}'.")
         sys.exit(1)
         
     if not re.match(r"^[a-zA-Z_][a-zA-Z0-9_-]*$", project_name):
-        print(f"{RED}✗ Error:{NC} Invalid project name '{project_name}'.")
-        print("  Must start with a letter/underscore and contain only letters, digits, _ or -")
+        console.print(f"[red]✗ Error:[/red] Invalid project name '{project_name}'.")
+        console.print("  Must start with a letter/underscore and contain only letters, digits, _ or -")
         sys.exit(1)
         
     target_dir = Path.cwd() / project_name
     if target_dir.exists():
-        print(f"{RED}✗ Error:{NC} Directory '{project_name}' already exists.")
+        console.print(f"[red]✗ Error:[/red] Directory '{project_name}' already exists.")
         sys.exit(1)
         
     current_os = get_current_os()
-    print(f"\n{BOLD}🚀 Creating {template_lang} project:{NC} {project_name} ({current_os})\n")
+    console.print(f"\n[bold]🚀 Creating {template_lang} project:[/bold] {project_name} ({current_os})\n")
     
     # Copy template tree
     shutil.copytree(template_dir, target_dir)
@@ -149,52 +145,52 @@ def scaffold_project(language_raw: str, project_name: str):
     # Execute post_init commands specified in templates.json using Python
     post_commands = lang_info.get("post_init", [])
     if post_commands:
-        print(f"  {CYAN}→{NC} Running post-init commands from templates.json:")
+        console.print(f"  [cyan]→[/cyan] Running post-init commands from templates.json:")
         for cmd in post_commands:
             formatted_cmd = cmd.replace("{{PROJECT_NAME}}", project_name).replace("{PROJECT_NAME}", project_name)
-            print(f"    • {formatted_cmd}")
+            console.print(f"    • {formatted_cmd}")
             try:
                 res = subprocess.run(formatted_cmd, shell=True, cwd=target_dir, capture_output=True, text=True)
                 if res.returncode == 0:
-                    print(f"      {GREEN}✓{NC} Success")
+                    console.print(f"      [green]✓[/green] Success")
                 else:
                     err_msg = res.stderr.strip() or res.stdout.strip()
-                    print(f"      {YELLOW}⚠{NC} Warning (code {res.returncode}): {err_msg}")
+                    console.print(f"      [yellow]⚠[/yellow] Warning (code {res.returncode}): {err_msg}")
             except Exception as e:
-                print(f"      {RED}✗ Error:{NC} {e}")
+                console.print(f"      [red]✗ Error:[/red] {e}")
                 
-    print(f"\n{GREEN}{BOLD}✅ '{project_name}' ready!{NC}\n")
-    print(f"{BOLD}Next steps:{NC}")
-    print(f"  cd {project_name}")
+    console.print(f"\n[green bold]✅ '{project_name}' ready![/green bold]\n")
+    console.print(f"[bold]Next steps:[/bold]")
+    console.print(f"  cd {project_name}")
     if template_lang == "python":
-        print("  uv run src/main.py")
+        console.print("  uv run src/main.py")
     else:
         req_cmd = placeholders.get("REQUIREMENTS_CMD", "./requirements.sh install")
         build_cmd = placeholders.get("BUILD_CMD", "./build.sh")
-        print(f"  {req_cmd}    # (optional) install dependencies")
-        print(f"  {build_cmd}                   # build & run")
+        console.print(f"  {req_cmd}    # (optional) install dependencies")
+        console.print(f"  {build_cmd}                   # build & run")
 
 def main():
     args = sys.argv[1:]
     config = load_config()
     
     if not args or "--help" in args or "-h" in args:
-        print(f"{BOLD}tbuild{NC} — Cross-platform project scaffolding tool\n")
-        print(f"{BOLD}Usage:{NC}")
-        print("  tbuild init <language> <project_name>\n")
-        print(f"{BOLD}Supported Languages (from templates.json):{NC}")
+        console.print(f"[bold]tbuild[/bold] — Cross-platform project scaffolding tool\n")
+        console.print(f"[bold]Usage:[/bold]")
+        console.print("  tbuild init <language> <project_name>\n")
+        console.print(f"[bold]Supported Languages (from templates.json):[/bold]")
         for name, info in config.items():
             aliases = f" ({', '.join(info['aliases'])})" if info.get("aliases") else ""
             desc = info.get("description", "")
-            print(f"  {name:<12}{aliases:<10} {desc}")
-        print(f"\n{BOLD}Examples:{NC}")
-        print("  tbuild init python my_py_app")
-        print("  tbuild init cpp my_cpp_app")
-        print("  tbuild init c my_c_lib")
+            console.print(f"  {name:<12}{aliases:<10} {desc}")
+        console.print(f"\n[bold]Examples:[/bold]")
+        console.print("  tbuild init python my_py_app")
+        console.print("  tbuild init cpp my_cpp_app")
+        console.print("  tbuild init c my_c_lib")
         sys.exit(0)
         
     if len(args) < 3 or args[0] != "init":
-        print(f"{RED}✗ Error:{NC} Invalid usage. Expected syntax: tbuild init <language> <project_name>")
+        console.print(f"[red]✗ Error:[/red] Invalid usage. Expected syntax: tbuild init <language> <project_name>")
         sys.exit(1)
         
     language = args[1]

@@ -12,7 +12,7 @@ C++ project initialized by `tbuild` on {{OS_NAME}}.
 {{BUILD_CMD}}
 ```
 
-## Update for editor (clangd)
+## Update for editor (clangd) (only once)
 ```bash
 {{UPDATE_CMD}}
 ```

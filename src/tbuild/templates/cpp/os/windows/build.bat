@@ -4,4 +4,5 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 cmake --build build
 if %errorlevel% neq 0 exit /b %errorlevel%
 
-.\build\bin\Debug_Windows_x86_64\{PROJECT_NAME}.exe
+
+.\build\bin\Debug_Windows_AMD64\{PROJECT_NAME}.exe

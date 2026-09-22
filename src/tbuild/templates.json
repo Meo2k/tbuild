@@ -1,13 +1,17 @@
 {
   "python": {
-    "aliases": ["py"],
+    "aliases": [
+      "py"
+    ],
     "description": "Python project (uv)",
     "post_init": [
       "uv init"
     ]
   },
   "cpp": {
-    "aliases": ["c++"],
+    "aliases": [
+      "c++"
+    ],
     "description": "C++ project (C++20, CMake + Ninja)",
     "post_init": [
       "git init",
@@ -27,7 +31,7 @@
         "placeholders": {
           "REQUIREMENTS_CMD": "requirements.bat install",
           "BUILD_CMD": "build.bat",
-          "UPDATE_CMD": "requirements.bat update",
+          "UPDATE_CMD": "powershell -Command \"Start-Process powershell -Verb RunAs -ArgumentList '-NoExit', '-Command', 'Set-Location \\\"$PWD\\\"; .\\requirements.bat update'\"",
           "OS_NAME": "Windows"
         }
       },
@@ -62,7 +66,7 @@
         "placeholders": {
           "REQUIREMENTS_CMD": "requirements.bat install",
           "BUILD_CMD": "build.bat",
-          "UPDATE_CMD": "requirements.bat update",
+          "UPDATE_CMD": "powershell -Command \"Start-Process powershell -Verb RunAs -ArgumentList '-NoExit', '-Command', 'Set-Location \\\"$PWD\\\"; .\\requirements.bat update'\"",
           "OS_NAME": "Windows"
         }
       },
