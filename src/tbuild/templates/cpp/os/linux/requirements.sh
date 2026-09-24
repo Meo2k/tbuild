@@ -38,18 +38,9 @@ case "$ACTION" in
     echo "Reloaded PATH and environment."
     echo "Completed dependencies installation."
     ;; 
-"update")
-    if [ -f "build/compile_commands.json" ]; then
-        ln -sf build/compile_commands.json compile_commands.json
-        echo "compile_commands.json linked successfully."
-    else 
-        echo "Not found compile_commands.json file in build directory. Please run './build.sh' command first."
-    fi
-    ;;
-*)
+
     echo "Usage:"
     echo "  ./requirements.sh install  -> install ninja, cmake, and C++ compiler"
-    echo "  ./requirements.sh update   -> create symlink for compile_commands.json"
     exit 1
     ;;
 esac

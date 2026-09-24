@@ -23,7 +23,6 @@
         "placeholders": {
           "REQUIREMENTS_CMD": "./requirements.sh install",
           "BUILD_CMD": "./build.sh",
-          "UPDATE_CMD": "./requirements.sh update",
           "OS_NAME": "Linux"
         }
       },
@@ -31,7 +30,6 @@
         "placeholders": {
           "REQUIREMENTS_CMD": "requirements.bat install",
           "BUILD_CMD": "build.bat",
-          "UPDATE_CMD": "powershell -Command \"Start-Process powershell -Verb RunAs -ArgumentList '-NoExit', '-Command', 'Set-Location \\\"$PWD\\\"; .\\requirements.bat update'\"",
           "OS_NAME": "Windows"
         }
       },
@@ -39,7 +37,6 @@
         "placeholders": {
           "REQUIREMENTS_CMD": "./requirements.sh install",
           "BUILD_CMD": "./build.sh",
-          "UPDATE_CMD": "./requirements.sh update",
           "OS_NAME": "macOS"
         }
       }
@@ -58,7 +55,6 @@
         "placeholders": {
           "REQUIREMENTS_CMD": "./requirements.sh install",
           "BUILD_CMD": "./build.sh",
-          "UPDATE_CMD": "./requirements.sh update",
           "OS_NAME": "Linux"
         }
       },
@@ -66,7 +62,6 @@
         "placeholders": {
           "REQUIREMENTS_CMD": "requirements.bat install",
           "BUILD_CMD": "build.bat",
-          "UPDATE_CMD": "powershell -Command \"Start-Process powershell -Verb RunAs -ArgumentList '-NoExit', '-Command', 'Set-Location \\\"$PWD\\\"; .\\requirements.bat update'\"",
           "OS_NAME": "Windows"
         }
       },
@@ -74,7 +69,6 @@
         "placeholders": {
           "REQUIREMENTS_CMD": "./requirements.sh install",
           "BUILD_CMD": "./build.sh",
-          "UPDATE_CMD": "./requirements.sh update",
           "OS_NAME": "macOS"
         }
       }

@@ -74,23 +74,7 @@ if /i "%ACTION%"=="install" (
     exit /b 0
 )
 
-if /i "%ACTION%"=="update" (
-    if exist "build\compile_commands.json" (
-        if exist "compile_commands.json" del /f /q "compile_commands.json"
-        
-        mklink "compile_commands.json" "build\compile_commands.json" >nul
-        if !errorlevel! equ 0 (
-            echo compile_commands.json linked successfully.
-        ) else (
-            echo Failed to create symlink. Try running CMD as Administrator or enable Developer Mode.
-        )
-    ) else (
-        echo Not found compile_commands.json file in build directory. Please run build script first.
-    )
-    exit /b 0
-)
-
 echo Usage:
 echo   requirements.bat install  -^> install ninja, cmake, and C++ build tools
-echo   requirements.bat update   -^> create symlink for compile_commands.json
 exit /b 1
+
