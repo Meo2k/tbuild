@@ -65,6 +65,11 @@ All template metadata, post-initialization commands, aliases, and OS-specific pl
       "git add -A",
       "git commit -m \"chore: init cpp project via tbuild\""
     ],
+    "next_steps": [
+      "cd {PROJECT_NAME}",
+      "{REQUIREMENTS_CMD}    # (optional) install dependencies",
+      "{BUILD_CMD}                   # build & run"
+    ],
     "os": {
       "linux": {
         "placeholders": {
@@ -95,8 +100,10 @@ All template metadata, post-initialization commands, aliases, and OS-specific pl
 | `aliases` | `list[string]` | No | Alternative command aliases for the template (e.g. `py` for `python`, `c++` for `cpp`). |
 | `description` | `string` | No | Short template summary displayed in `tbuild --help`. |
 | `post_init` | `list[string]` | No | List of shell commands executed sequentially inside the generated project folder. |
+| `next_steps` | `list[string]` | No | List of next step command hints displayed to the user after generation (supports placeholders like `{PROJECT_NAME}`, `{BUILD_CMD}`). |
 | `os` | `object` | No | Object containing OS-dependent configurations keyed by platform (`linux`, `windows`, `darwin`/`macos`). |
 | `os.<platform>.placeholders` | `object` | No | Key-value pairs for placeholders (e.g., `{{BUILD_CMD}}` or `{BUILD_CMD}`) replaced dynamically in text files based on host OS. |
+| `os.<platform>.next_steps` | `list[string]` | No | Optional OS-specific override for `next_steps`. |
 
 ---
 

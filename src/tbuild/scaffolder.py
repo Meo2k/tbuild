@@ -78,6 +78,28 @@ def execute_post_init(post_commands: list[str], target_dir: Path, project_name: 
         except Exception as e:
             print_substep_error(str(e))
 
+def resolve_next_steps(lang_info: dict, current_os: str, substitutions: dict) -> list[str]:
+    """Resolve next_steps from templates.json dynamically based on OS and placeholders."""
+    os_info = lang_info.get("os", {}).get(current_os, {})
+    if not os_info and current_os == "darwin":
+        os_info = lang_info.get("os", {}).get("macos", {})
+
+    raw_steps = os_info.get("next_steps") or lang_info.get("next_steps", ["cd {PROJECT_NAME}"])
+
+    resolved_steps = []
+    for step in raw_steps:
+        line = step
+        for k, v in substitutions.items():
+            line = line.replace(f"{{{{{k}}}}}", str(v)).replace(f"{{{k}}}", str(v))
+
+        # Skip step if it has an unresolved placeholder or is empty
+        if re.search(r"\{[a-zA-Z0-9_]+\}", line) or not line.strip():
+            continue
+
+        resolved_steps.append(line)
+
+    return resolved_steps
+
 def scaffold_project(language_raw: str, project_name: str) -> bool:
     """Core workflow for scaffolding a project from templates."""
     config = load_config()
@@ -142,5 +164,6 @@ def scaffold_project(language_raw: str, project_name: str) -> bool:
     execute_post_init(post_commands, target_dir, project_name)
 
     # 6. Show next steps
-    print_completed(project_name, template_lang, placeholders)
+    next_steps = resolve_next_steps(lang_info, current_os, substitutions)
+    print_completed(project_name, next_steps)
     return True

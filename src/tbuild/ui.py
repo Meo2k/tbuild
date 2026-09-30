@@ -39,20 +39,12 @@ def print_substep_error(msg: str) -> None:
 def print_header(template_lang: str, project_name: str, os_name: str) -> None:
     console.print(f"\n[bold]🚀 Creating {template_lang} project:[/bold] {project_name} ({os_name})\n")
 
-def print_completed(project_name: str, template_lang: str, placeholders: dict) -> None:
+def print_completed(project_name: str, next_steps: list[str]) -> None:
     console.print(f"\n[green bold]✅ '{project_name}' ready![/green bold]\n")
-    console.print("[bold]Next steps:[/bold]")
-    console.print(f"  cd {project_name}")
-    if template_lang == "python":
-        req_cmd = placeholders.get("REQUIREMENTS_CMD")
-        if req_cmd:
-            console.print(f"  {req_cmd}    # (optional) check/install dependencies")
-        console.print("  uv run src/main.py")
-    else:
-        req_cmd = placeholders.get("REQUIREMENTS_CMD", "./requirements.sh install")
-        build_cmd = placeholders.get("BUILD_CMD", "./build.sh")
-        console.print(f"  {req_cmd}    # (optional) install dependencies")
-        console.print(f"  {build_cmd}                   # build & run")
+    if next_steps:
+        console.print("[bold]Next steps:[/bold]")
+        for step in next_steps:
+            console.print(f"  {step}")
 
 def print_help(config: dict) -> None:
     console.print("[bold]tbuild[/bold] — Cross-platform project scaffolding tool\n")

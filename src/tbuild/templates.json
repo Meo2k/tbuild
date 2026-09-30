@@ -7,6 +7,11 @@
     "post_init": [
       "uv init"
     ],
+    "next_steps": [
+      "cd {PROJECT_NAME}",
+      "{REQUIREMENTS_CMD}    # (optional) check/install dependencies",
+      "uv run src/main.py"
+    ],
     "os": {
       "linux": {
         "placeholders": {
@@ -37,6 +42,11 @@
       "git init",
       "git add -A",
       "git commit -m \"chore: init cpp project via tbuild\""
+    ],
+    "next_steps": [
+      "cd {PROJECT_NAME}",
+      "{REQUIREMENTS_CMD}    # (optional) install dependencies",
+      "{BUILD_CMD}                   # build & run"
     ],
     "os": {
       "linux": {
@@ -69,6 +79,11 @@
       "git init",
       "git add -A",
       "git commit -m \"chore: init c project via tbuild\""
+    ],
+    "next_steps": [
+      "cd {PROJECT_NAME}",
+      "{REQUIREMENTS_CMD}    # (optional) install dependencies",
+      "{BUILD_CMD}                   # build & run"
     ],
     "os": {
       "linux": {
