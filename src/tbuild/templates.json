@@ -6,7 +6,27 @@
     "description": "Python project (uv)",
     "post_init": [
       "uv init"
-    ]
+    ],
+    "os": {
+      "linux": {
+        "placeholders": {
+          "REQUIREMENTS_CMD": "./requirements.sh install",
+          "OS_NAME": "Linux"
+        }
+      },
+      "windows": {
+        "placeholders": {
+          "REQUIREMENTS_CMD": "requirements.bat install",
+          "OS_NAME": "Windows"
+        }
+      },
+      "darwin": {
+        "placeholders": {
+          "REQUIREMENTS_CMD": "./requirements.sh install",
+          "OS_NAME": "macOS"
+        }
+      }
+    }
   },
   "cpp": {
     "aliases": [

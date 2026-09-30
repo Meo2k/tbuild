@@ -39,6 +39,7 @@ case "$ACTION" in
     echo "Completed dependencies installation."
     ;; 
 
+*)
     echo "Usage:"
     echo "  ./requirements.sh install  -> install ninja, cmake, and C++ compiler"
     exit 1

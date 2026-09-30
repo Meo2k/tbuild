@@ -1,6 +1,11 @@
 # {{PROJECT_NAME}}
 
-Python project generated with `tbuild`.
+Python project initialized by `tbuild` on {{OS_NAME}}.
+
+## Install requirements
+```bash
+{{REQUIREMENTS_CMD}}
+```
 
 ## Running the Project
 

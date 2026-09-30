@@ -7,4 +7,7 @@ C project initialized by `tbuild` on {{OS_NAME}}.
 {{REQUIREMENTS_CMD}}
 ```
 
-
+## Running the Project
+```bash
+{{BUILD_CMD}}
+```

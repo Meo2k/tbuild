@@ -1,4 +1,14 @@
+import sys
 from rich.console import Console
+
+if sys.platform == "win32":
+    try:
+        if sys.stdout and hasattr(sys.stdout, "reconfigure"):
+            sys.stdout.reconfigure(encoding="utf-8")
+        if sys.stderr and hasattr(sys.stderr, "reconfigure"):
+            sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
 
 console = Console()
 
@@ -34,6 +44,9 @@ def print_completed(project_name: str, template_lang: str, placeholders: dict) -
     console.print("[bold]Next steps:[/bold]")
     console.print(f"  cd {project_name}")
     if template_lang == "python":
+        req_cmd = placeholders.get("REQUIREMENTS_CMD")
+        if req_cmd:
+            console.print(f"  {req_cmd}    # (optional) check/install dependencies")
         console.print("  uv run src/main.py")
     else:
         req_cmd = placeholders.get("REQUIREMENTS_CMD", "./requirements.sh install")
