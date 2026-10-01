@@ -7,15 +7,24 @@
 ### 1. Direct Global Install (Without cloning)
 
 Install `tbuild` directly from remote Git repository into your system environment:
-
+#### gitlab
 ```bash
 uv tool install git+https://gitlab.com/public-lovecat/tbuild.git
 ```
+#### github
+```bash
+uv tool install git+https://github.com/Meo2k/tbuild.git
+```
 
 *Or run directly without installing:*
-
+#### gitlab
 ```bash
 uvx --from git+https://gitlab.com/public-lovecat/tbuild.git tbuild init python my_app
+```
+
+#### github
+```bash
+uvx --from git+https://github.com/Meo2k/tbuild.git tbuild init python my_app
 ```
 
 ### 2. Local Development Install
