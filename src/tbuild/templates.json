@@ -9,29 +9,8 @@
     ],
     "next_steps": [
       "cd {PROJECT_NAME}",
-      "{REQUIREMENTS_CMD}    # (optional) check/install dependencies",
-      "uv run src/main.py"
-    ],
-    "os": {
-      "linux": {
-        "placeholders": {
-          "REQUIREMENTS_CMD": "./requirements.sh install",
-          "OS_NAME": "Linux"
-        }
-      },
-      "windows": {
-        "placeholders": {
-          "REQUIREMENTS_CMD": "requirements.bat install",
-          "OS_NAME": "Windows"
-        }
-      },
-      "darwin": {
-        "placeholders": {
-          "REQUIREMENTS_CMD": "./requirements.sh install",
-          "OS_NAME": "macOS"
-        }
-      }
-    }
+      "uv run {PROJECT_NAME}"
+    ]
   },
   "cpp": {
     "aliases": [
